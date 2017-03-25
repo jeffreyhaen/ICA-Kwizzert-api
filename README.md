@@ -2,8 +2,18 @@
 # HAN ICA DWA Casus - Kwizzert
 Gemaakt door: Jeffrey Haen & Jevgeni Geurtsen.
 
-# Requirements
-De Kwizzert bestaat eigenlijk uit 3 single page web applicaties:
+# Inhoudsopgave
+
+1. [Systeemeisen](#systeemeisen)
+1. [Schermontwerpen](#schermontwerpen)
+1. [Communicatie protocol](#communicatie-protocol)
+1. [Architectuur](#architectuur)
+1. [Externe frameworks](#externe-frameworks)
+1. [Code styling](#code-styling)
+
+
+# Systeemeisen
+Het Kwizzert systeem bestaat uit 3 single page web applicaties:
 
 ### De Team-app. 
 Deze SPA draait op de smartphones van de teams. Deze app kan twee dingen:
@@ -104,8 +114,8 @@ Onderstaand zijn de verschillende modellen te zien die in een model validatie fr
 }
 
 
-# External libraries
-Onderstaand alle bewuste gebruikte libraries binnen het Kwizzert systeem (Server en Client).
+# Externe frameworks
+Hieronder staan alle bewust gebruikte bibliotheken binnen het Kwizzert systeem (Server en Client).
 
 - [React](#)
 - [Node.js](#)
@@ -116,6 +126,6 @@ Onderstaand alle bewuste gebruikte libraries binnen het Kwizzert systeem (Server
 - [Immutability-Helper](#)
 
 
-# Code style
+# Code styling
 Tijdens de ontwikkeling van zowel de kwizzert-api als de kwizzert app worden dezelfde code style conventies gebruikt. Het idee is om zoveel mogelijk gebruik te maken van de [felixge - node style guide](https://github.com/felixge/node-style-guide).
 De code wordt volledig in het Engels ontwikkelt.
