@@ -36,17 +36,86 @@ Deze app heeft geen eigen interactie, maar toont, real-time:
 - Lege antwoorden worden genegeerd door de app. Als een team per ongeluk een leeg antwoord instuurt, dan wordt dat niet aan de KwizMeestert of op het Scorebord getoond.
 - Zodra de KwizMeestert de Kwiz-avond afsluit, Toont het scorebord de namen van de teams die nummer 1, 2 en 3 zijn geworden (gemeten aan het aantal rondepunten dat ze gehaald hebben). In dat “slotscherm” ligt er een visuele nadruk op de naam van het team dat nummer 1 werd.
 
+
 # Schermontwerpen
+...
 
 
 # Communicatie protocol
+...
 
 
 # Architectuur
+Om het Kwizzert systeem te realiseren zijn twee applicaties ontwikkelt. De twee applicaties communiceren met elkaar wisselen data over websockets. Eén applicatie zal als server (api) dienen. De andere applicatie zal als client dienen en is afhankelijk van de server om zijn informatie op te halen en te versturen. De server heeft een connectie met een database om informatie vast te leggen.
+
+## Applicaties
+
+### Server
+De server werkt gedeeltelijk als een REST api om onder andere nieuwe teams te kunnen registreren. Het andere gedeelte van de server zorgt ervoor om geselecteerde vragen en antwoorden tussen teams te communiceren met behulp van websockets.
+
+*Softwareplatform:* Nodejs, omdat...
+*Websockets: * Socket.io, omdat...
+*Database: * MongoDb, omdat...
+*Model validatie: * Mongoose, omdat...
+
+### Client
+De client is opgedeeld in drie onderdelen, de Team-app, de KwizMeestert-app en de Scoreboard-app.
+
+*Softwareplatform: * Nodejs, omdat...
+*User Interface framework: * React, omdat...
+*User Interface styling: * Bootstrap, omdat...
+*Code structure: * Redux, omdat...
+
+## Modellen en data structuur
+Onderstaand zijn de verschillende modellen te zien die in een model validatie framework zullen worden vast gelegd. Deze data structuur wordt ook op dezelfde manier in de database opgeslagen.
+
+*Game*
+{
+    *MaxRounds*: Number,
+    *Rounds*: [ref Round],
+    *Teams*: [ref Team],
+}
+
+*Round*
+{
+    *Questions*: [ref Question],
+}
+
+*Category*
+{
+    *Name*: String,
+}
+
+*Question*
+{
+    *Category*: ref Category,
+    *Name*: String,
+}
+
+*Answer*
+{
+    *Question*: ref Question,
+    *Result*: String,
+}
+
+*Team*
+{
+    *Name*: String,
+}
 
 
 # External libraries
+Onderstaand alle bewuste gebruikte libraries binnen het Kwizzert systeem (Server en Client).
+
+- [React](#)
+- [Node.js](#)
+- [Socket.io](#)
+- [MongoDb](#)
+- [Mongoose](#)
+- [Redux](#)
+- [Immutability-Helper](#)
 
 
 # Code style
-
+Tijdens de ontwikkeling van zowel de kwizzert-api als de kwizzert app worden dezelfde code style conventies gebruikt. Het idee is om zoveel mogelijk gebruik te maken van de [felixge - node style guide](https://github.com/felixge/node-style-guide).
+De code wordt volledig in het Engels ontwikkelt.
