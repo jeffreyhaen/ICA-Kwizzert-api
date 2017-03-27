@@ -48,7 +48,7 @@ Deze app heeft geen eigen interactie, maar toont, real-time:
 
 
 # Schermontwerpen
-...
+Alle schermontwerpen van de client-side applicaties zijn [hier](https://github.com/jeffreyhaen/ICA-Kwizzert-api/tree/master/wireframes) te vinden.
 
 
 # Communicatie protocol
@@ -63,18 +63,18 @@ Om het Kwizzert systeem te realiseren zijn twee applicaties ontwikkelt. De twee 
 ### Server
 De server werkt gedeeltelijk als een REST api om onder andere nieuwe teams te kunnen registreren. Het andere gedeelte van de server zorgt ervoor om geselecteerde vragen en antwoorden tussen teams te communiceren met behulp van websockets.
 
-- *Softwareplatform:* Nodejs, omdat...
-- *Websockets:* Socket.io, omdat...
-- *Database:* MongoDb, omdat...
-- *Model validatie:* Mongoose, omdat...
+- *Softwareplatform:* Nodejs, omdat het gebruik van Nodejs een vereiste van de opdracht is.
+- *Websockets:* Socket.io, omdat het gebruik van websockets een vereiste van de opdracht is en we opzoek zijn naar een mechanisme dat oude browsers ondersteund en gemakkelijk te gebruiken is. Socket.io biedt deze mogelijkheden.
+- *Database:* MongoDb, omdat we gegevens zoals, vragen, antwoorden en teams op willen slaan. Om snel te kunnen querien op deze data, willen we gebruik maken van een database.
+- *Model validatie:* Mongoose, omdat we data validatie op één plek willen vastleggen. Daarnaast willen we hiermee voorkomen dat de database corrupte data bevat.
 
 ### Client
 De client is opgedeeld in drie onderdelen, de Team-app, de KwizMeestert-app en de Scoreboard-app.
 
-- *Softwareplatform:* Nodejs, omdat...
-- *User Interface framework:* React, omdat...
-- *User Interface styling:* Bootstrap, omdat...
-- *Code structure:* Redux, omdat...
+- *Softwareplatform:* Nodejs, omdat het gebruik van Nodejs een vereiste van de opdracht is.
+- *User Interface framework:* React, omdat het gebruik van React een versite van de opdracht is.
+- *User Interface styling:* Bootstrap, omdat we een gelikte weergave van de user interface willen bieden, zonder zelf al te veel styling te hoeven maken.
+- *Code structure:* Redux, omdat op veel plekken een bepaalde toestand moeten bijhouden en opvragen. Met Redux kunnen we ervoor zorgen dat React componenten niet afhankelijk zijn van bepaalde data of user input.
 
 ## Modellen en data structuur
 Onderstaand zijn de verschillende modellen te zien die in een model validatie framework zullen worden vast gelegd. Deze data structuur wordt ook op dezelfde manier in de database opgeslagen.
@@ -105,7 +105,7 @@ Onderstaand zijn de verschillende modellen te zien die in een model validatie fr
 *Answer*
 {
     *Question*: ref Question,
-    *Result*: String,
+    *Value*: String,
 }
 
 *Team*
@@ -117,13 +117,13 @@ Onderstaand zijn de verschillende modellen te zien die in een model validatie fr
 # Externe frameworks
 Hieronder staan alle bewust gebruikte bibliotheken binnen het Kwizzert systeem (Server en Client).
 
-- [React](#)
-- [Node.js](#)
-- [Socket.io](#)
-- [MongoDb](#)
-- [Mongoose](#)
-- [Redux](#)
-- [Immutability-Helper](#)
+- [React](https://facebook.github.io/react/)
+- [Node.js](https://nodejs.org/)
+- [Socket.io](https://socket.io/)
+- [MongoDb](https://www.mongodb.com/)
+- [Mongoose](http://mongoosejs.com/)
+- [Redux](http://redux.js.org/)
+- [Immutability-Helper](https://github.com/kolodny/immutability-helper)
 
 
 # Code styling
