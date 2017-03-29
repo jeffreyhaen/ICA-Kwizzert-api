@@ -52,7 +52,208 @@ Alle schermontwerpen van de client-side applicaties zijn [hier](https://github.c
 
 
 # Communicatie protocol
-...
+
+### Aanmelden bij server 
+Elke client dient zichzelf aan te melden bij de server met behulp van een websocket.
+
+**TaskCycle**: KwizMeestert-App | Team-App | Scoreboard -> Server
+
+``` Javascript
+RegisterClient
+{
+    Type: String,
+    ClientType: String
+}
+```
+
+### Team aanmelden 
+Een team dient zich voorafgaand het starten van het spel aan te melden met een naam.
+
+**TaskCycle**: Team-App -> Server
+
+``` Javascript
+RegisterTeam
+{
+    Type: String,
+    Game: ref Game,
+    Name: String,
+}
+```
+
+### Spelinformatie ophalen van server 
+Gedurende het hele spel dient de Team-App informatie over het team en het spel (denk aan score, ronde, huidige vraag) te tonen aan de spelers.
+
+**TaskCycle**: Team-App -> Server
+``` Javascript
+RequestTeamGameInformation
+{
+    Type: String,
+    Game: ref Game,
+    Team: ref Team,
+}
+```
+
+**TaskCycle**: (RequestTeamGameInformation ->) Server -> Team-App
+``` Javascript
+ResponseTeamGameInformation
+{
+    Type: String,
+    Team: ref Team,
+    Question: ref Question,
+    CurrentRound: Number,
+    MaximumRounds: Number,
+    Rank: Number,
+    PointsNeededForRankUp: Number
+}
+```
+
+### Antwoord opsturen
+Een team dient een antwoord te kunnen versturen naar de server voor de huidige vraag.
+
+TaskCyle: Team-App -> Server
+``` Javascript
+RegisterAnswer
+{
+    Type: String,
+    Game: ref Game,
+    Team: ref Team,
+    Question: ref Question,
+    Value: String
+}
+```
+
+### Spelinformatie ophalen van server 
+Gedurende het hele spel dient de Scoreboard-App informatie over het verloop van het spel te tonen.
+
+**TaskCycle**: Server -> Scoreboard-App
+``` Javascript
+GameInformation
+{
+    Type: String,
+    Game: ref Game,
+    TeamsInformation: [ref ResponseTeamGameInformation],
+    Timeleft: Number // seconds
+}
+```
+
+### Nieuw spel openstellen 
+Een meestert moet een nieuw spel voor nieuwe aanmeldingen kunnen openstellen.
+
+**TaskCycle**: KwizMeestert-App -> Server -> Team-App & Scoreboard-App
+``` Javascript
+InitializeGame
+{
+    Type: String,
+    MaximumRounds: Number   
+}
+```
+
+### Aameldingen beoordelen 
+Een meestert moet de aangemelde teams kunnen goed- en afkeuren.
+
+**TaskCycle**: KwizMeestert-App -> Server
+``` Javascript
+RateTeamRegistration
+{   
+    Type: String,
+    Game: ref Game,
+    Team: ref Team,
+    Accepted: Boolean
+}
+```
+
+### Spel starten 
+Een meestert moet het spel kunnen starten waardoor de aameldperiode wordt gesloten en de meestert categorien kan kiezen.
+
+**TaskCycle**: KwizMeestert-App -> Server -> Team-App & Scoreboard-App
+``` Javascript
+GameStart
+{
+    Type: String,
+    Game: ref Game,
+}
+```
+
+### Spel stoppen 
+Een meestert moet het spel kunnen stoppen.
+
+**TaskCycle**: KwizMeestert-App -> Server -> Team-App & Scoreboard-App
+``` Javascript
+GameStop
+{
+    Type: String,
+    Game: ref Game,
+}
+```
+
+### Categorien kiezen 
+Een meestert moet na het stoppen van de aameldperiode een aantal categorien kiezen.
+
+**TaskCycle**: KwizMeestert-App -> Server
+``` Javascript
+ChooseCategories
+{
+    Type: String,
+    Game: ref Game,
+    Categories: [ref Category] // length default 3
+}
+```
+
+### Vraag openstellen 
+Een meestert kan een vraag selecteren en deze openstellen aan alle deelnemende teams.
+
+**TaskCycle**: KwizMeestert-App -> Server -> Team-App & Scoreboard
+``` Javascript
+QuestionSelect
+{
+    Type: String,
+    Game: ref Game,
+    Round: ref Round,
+    Question: ref Question,
+}
+```
+
+### Ronde starten 
+De meestert kan een ronde starten.
+
+**TaskCycle**: KwizMeestert-App -> Server -> Team-App & Scoreboard-App
+``` Javascript
+RoundStart
+{
+    Type: String,
+    Game: ref Game,
+    Questions: [ref Question], // length default 12
+    MaximumThinkingTime: Number, // seconds
+}
+```
+
+### Ronde stoppen 
+Een meestert kan een ronde stoppen.
+
+**TaskCycle**: KwizMeestert-App -> Server -> Team-App & Scoreboard-App
+``` Javascript
+RoundStop
+{
+    Type: String,
+    Game: ref Game,
+    Round: ref Round,
+}
+```
+
+### Antwoorden beoordelen 
+Een meestert kan ingezonden antwoorden van de teams beoordelen op correctheid.
+
+**TaskCycle**: KwizMeester-App -> Server -> Team-App & Scoreboard-App
+``` Javascript
+RateTeamAnswer
+{
+    Type: String,
+    Game: ref Game,
+    Team: ref Team,
+    Question: ref Question,
+    Value: String,
+}
+```
 
 
 # Architectuur
@@ -76,6 +277,14 @@ De client is opgedeeld in drie onderdelen, de Team-app, de KwizMeestert-app en d
 - *User Interface styling:* Bootstrap, omdat we een gelikte weergave van de user interface willen bieden, zonder zelf al te veel styling te hoeven maken.
 - *Code structure:* Redux, omdat op veel plekken een bepaalde toestand moeten bijhouden en opvragen. Met Redux kunnen we ervoor zorgen dat React componenten niet afhankelijk zijn van bepaalde data of user input.
 
+## Routing
+De drie clients: KwizMeester-App, Team-App en Scoreboard-App worden in een project gerealiseerd maar zijn te benaderen als losse componenten en zijn op zichzelf staand.
+
+Hieronder is de routing van de drie clients te zien:
+| KwizMeester-App | Team-App | Scoreboard-App
+--- | --- | ---
+/kwizmeestert|/team|/scoreboard
+
 ## Modellen en data structuur
 Onderstaand zijn de verschillende modellen te zien die in een model validatie framework zullen worden vast gelegd. Deze data structuur wordt ook op dezelfde manier in de database opgeslagen.
 
@@ -89,6 +298,7 @@ Onderstaand zijn de verschillende modellen te zien die in een model validatie fr
 *Round*
 {
     *Questions*: [ref Question],
+    *UsedQuestions*: [ref Question],
 }
 
 *Category*
