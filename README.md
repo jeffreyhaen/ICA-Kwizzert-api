@@ -281,7 +281,8 @@ De client is opgedeeld in drie onderdelen, de Team-app, de KwizMeestert-app en d
 De drie clients: KwizMeester-App, Team-App en Scoreboard-App worden in een project gerealiseerd maar zijn te benaderen als losse componenten en zijn op zichzelf staand.
 
 Hieronder is de routing van de drie clients te zien:
-KwizMeester-App | Team-App | Scoreboard-App
+
+|KwizMeester-App | Team-App | Scoreboard-App
 --- | --- | ---
 /kwizmeestert | /team | /scoreboard
 
