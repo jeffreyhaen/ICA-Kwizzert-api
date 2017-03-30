@@ -6,8 +6,8 @@ Gemaakt door: Jeffrey Haen & Jevgeni Geurtsen.
 
 1. [Systeemeisen](#systeemeisen)
 1. [Schermontwerpen](#schermontwerpen)
-1. [Communicatie protocol](#communicatie-protocol)
 1. [Architectuur](#architectuur)
+1. [Communicatie protocol](#communicatie-protocol)
 1. [Externe frameworks](#externe-frameworks)
 1. [Code styling](#code-styling)
 
@@ -51,219 +51,16 @@ Deze app heeft geen eigen interactie, maar toont, real-time:
 Alle schermontwerpen van de client-side applicaties zijn [hier](https://github.com/jeffreyhaen/ICA-Kwizzert-api/tree/master/wireframes) te vinden.
 
 
-# Communicatie protocol
-
-### Aanmelden bij server 
-Elke client dient zichzelf aan te melden bij de server met behulp van een websocket.
-
-**Task cycle**: KwizMeestert-App | Team-app | Scoreboard -> Server
-``` Javascript
-RegisterClient
-{
-    Type: String,
-    ClientType: String,
-}
-```
-
-### Team aanmelden 
-Een team dient zich voorafgaand het starten van het spel aan te melden met een naam.
-
-**Task cycle**: Team-app -> Server
-``` Javascript
-RegisterTeam
-{
-    Type: String,
-    Game: ref Game,
-    Name: String,
-}
-```
-
-### Spelinformatie ophalen van server 
-Gedurende het hele spel dient de Team-app informatie over het team en het spel (denk aan score, ronde, huidige vraag) te tonen aan de spelers.
-
-**Task cycle**: Team-app -> Server
-``` Javascript
-RequestTeamGameInformation
-{
-    Type: String,
-    Game: ref Game,
-    Team: ref Team,
-}
-```
-
-**Task cycle**: (RequestTeamGameInformation ->) Server -> Team-app
-``` Javascript
-ResponseTeamGameInformation
-{
-    Type: String,
-    Team: ref Team,
-    Question: ref Question,
-    CurrentRound: Number,
-    MaximumRounds: Number,
-    Rank: Number,
-    PointsNeededForRankUp: Number,
-}
-```
-
-### Antwoord opsturen
-Een team dient een antwoord te kunnen versturen naar de server voor de huidige vraag.
-
-TaskCyle: Team-app -> Server
-``` Javascript
-RegisterAnswer
-{
-    Type: String,
-    Game: ref Game,
-    Team: ref Team,
-    Question: ref Question,
-    Value: String,
-}
-```
-
-### Spelinformatie ophalen van server 
-Gedurende het hele spel dient de Scoreboard-app informatie over het verloop van het spel te tonen.
-
-**Task cycle**: Server -> Scoreboard-app
-``` Javascript
-GameInformation
-{
-    Type: String,
-    Game: ref Game,
-    TeamsInformation: [ref ResponseTeamGameInformation],
-    Timeleft: Number, // seconds
-}
-```
-
-### Nieuw spel openstellen 
-Een KwizMeestert moet een nieuw spel voor nieuwe aanmeldingen kunnen openstellen.
-
-**Task cycle**: KwizMeestert-App -> Server -> Team-app & Scoreboard-app
-``` Javascript
-InitializeGame
-{
-    Type: String,
-    MaximumRounds: Number,
-}
-```
-
-### Aameldingen beoordelen 
-Een KwizMeestert moet de aangemelde teams kunnen goed- en afkeuren.
-
-**Task cycle**: KwizMeestert-App -> Server
-``` Javascript
-RateTeamRegistration
-{   
-    Type: String,
-    Game: ref Game,
-    Team: ref Team,
-    Accepted: Boolean,
-}
-```
-
-### Spel starten 
-Een KwizMeestert moet het spel kunnen starten waardoor de aameldperiode wordt gesloten en de KwizMeestert categoriën kan kiezen.
-
-**Task cycle**: KwizMeestert-App -> Server -> Team-app & Scoreboard-app
-``` Javascript
-GameStart
-{
-    Type: String,
-    Game: ref Game,
-}
-```
-
-### Spel stoppen 
-Een KwizMeestert moet het spel kunnen stoppen.
-
-**Task cycle**: KwizMeestert-App -> Server -> Team-app & Scoreboard-app
-``` Javascript
-GameStop
-{
-    Type: String,
-    Game: ref Game,
-}
-```
-
-### categoriën kiezen 
-Een KwizMeestert moet na het stoppen van de aameldperiode een aantal categoriën kiezen.
-
-**Task cycle**: KwizMeestert-App -> Server
-``` Javascript
-ChooseCategories
-{
-    Type: String,
-    Game: ref Game,
-    Categories: [ref Category], // length default 3
-}
-```
-
-### Vraag openstellen 
-Een KwizMeestert kan een vraag selecteren en deze openstellen aan alle deelnemende teams.
-
-**Task cycle**: KwizMeestert-App -> Server -> Team-app & Scoreboard
-``` Javascript
-QuestionSelect
-{
-    Type: String,
-    Game: ref Game,
-    Round: ref Round,
-    Question: ref Question,
-}
-```
-
-### Ronde starten 
-De KwizMeestert kan een ronde starten.
-
-**Task cycle**: KwizMeestert-App -> Server -> Team-app & Scoreboard-app
-``` Javascript
-RoundStart
-{
-    Type: String,
-    Game: ref Game,
-    Questions: [ref Question], // length default 12
-    MaximumThinkingTime: Number, // seconds
-}
-```
-
-### Ronde stoppen 
-Een KwizMeestert kan een ronde stoppen.
-
-**Task cycle**: KwizMeestert-App -> Server -> Team-app & Scoreboard-app
-``` Javascript
-RoundStop
-{
-    Type: String,
-    Game: ref Game,
-    Round: ref Round,
-}
-```
-
-### Antwoorden beoordelen 
-Een KwizMeestert kan ingezonden antwoorden van de teams beoordelen op correctheid.
-
-**Task cycle**: KwizMeester-app -> Server -> Team-app & Scoreboard-app
-``` Javascript
-RateTeamAnswer
-{
-    Type: String,
-    Game: ref Game,
-    Team: ref Team,
-    Question: ref Question,
-    Value: String,
-}
-```
-
-
 # Architectuur
 Om het Kwizzert systeem te realiseren zijn twee applicaties ontwikkelt. De twee applicaties communiceren met elkaar wisselen data over websockets. Eén applicatie zal als server (api) dienen. De andere applicatie zal als client dienen en is afhankelijk van de server om zijn informatie op te halen en te versturen. De server heeft een connectie met een database om informatie vast te leggen.
 
 ## Applicaties
 
 ### Server
-De server werkt gedeeltelijk als een REST api om onder andere nieuwe teams te kunnen registreren. Het andere gedeelte van de server zorgt ervoor om geselecteerde vragen en antwoorden tussen teams te communiceren met behulp van websockets.
+De server werkt als een websocket server en stelt een verbinding open om informatie te delen met verbonden clients. We maken gebruik van websockets, omdat we een "two way communication" systeem ontwikkelen. Daarnaast hebben we geen voordelen van een REST api nodig zoals, caching. In het hoofdstuk [Communicatie protocol](#communicatie-protocol) is terug te vinden hoe de clients en de server onderling communiceren.
 
 - **Softwareplatform:** Nodejs, omdat het gebruik van Nodejs een vereiste van de opdracht is.
-- **Websockets:** Socket.io, omdat het gebruik van websockets een vereiste van de opdracht is en we opzoek zijn naar een mechanisme dat oude browsers ondersteund en gemakkelijk te gebruiken is. Socket.io biedt deze mogelijkheden.
+- **Websockets:** Socket.io, omdat het gebruik van websockets of REST een vereiste van de opdracht is en we opzoek zijn naar een mechanisme dat oude browsers ondersteund en gemakkelijk te gebruiken is. Daarnaast willen we gebruik maken van "two way communication". Socket.io biedt deze mogelijkheden.
 - **Database:** MongoDb, omdat we gegevens zoals, vragen, antwoorden en teams op willen slaan. Om snel te kunnen querien op deze data, willen we gebruik maken van een database.
 - **Model validatie:** Mongoose, omdat we data validatie op één plek willen vastleggen. Daarnaast willen we hiermee voorkomen dat de database corrupte data bevat.
 
@@ -323,6 +120,215 @@ Team
     Name: String,
 }
 ```
+
+
+# Communicatie protocol
+Om onderling van clients naar server en andersom te kunnen communiceren maken we gebruik van websockets. In dit hoofdstuk staan afspraken beschreven hoe bijvoorbeeld een client een bericht naar de server stuurt, zodat een server ook begrijpt wat er verstuurt wordt.
+
+*Elk type bericht bevat een veld "**Type: String**". Dit veld bevat de naam van het bericht, zodat de server weet welk soort bericht binnen komt.*
+
+### Aanmelden bij server 
+Elke client dient zichzelf aan te melden bij de server met behulp van een websocket. Om een client zich bij de server te identificeren moet worden aangegeven om wat voor een soort client het gaat.
+
+*Voor dit bericht zijn drie constante waardes aanwezig: 'KwizMeestert-app', 'Team-app' en 'Scoreboard-app'.*
+
+**Bericht cyclus**: KwizMeestert-app | Team-app | Scoreboard-app -> Server
+``` Javascript
+RegisterClient
+{
+    Type: String,
+    ClientType: String,
+}
+```
+
+### Team aanmelden 
+Een team dient zich voorafgaand het starten van het spel aan te melden met een naam.
+
+**Bericht cyclus**: Team-app -> Server
+``` Javascript
+RegisterTeam
+{
+    Type: String,
+    Game: ref Game,
+    Name: String,
+}
+```
+
+### Spelinformatie ophalen van server 
+Gedurende het hele spel dient de Team-app informatie over het team en het spel (denk aan score, ronde, huidige vraag) te tonen aan de spelers.
+
+**Bericht cyclus**: Team-app -> Server
+``` Javascript
+RequestTeamGameInformation
+{
+    Type: String,
+    Game: ref Game,
+    Team: ref Team,
+}
+```
+
+**Bericht cyclus**: (RequestTeamGameInformation ->) Server -> Team-app
+``` Javascript
+ResponseTeamGameInformation
+{
+    Type: String,
+    Team: ref Team,
+    Question: ref Question,
+    CurrentRound: Number,
+    MaximumRounds: Number,
+    Rank: Number,
+    PointsNeededForRankUp: Number,
+}
+```
+
+### Antwoord opsturen
+Een team dient een antwoord te kunnen versturen naar de server voor de huidige vraag.
+
+TaskCyle: Team-app -> Server
+``` Javascript
+RegisterAnswer
+{
+    Type: String,
+    Game: ref Game,
+    Team: ref Team,
+    Question: ref Question,
+    Value: String,
+}
+```
+
+### Spelinformatie ophalen van server 
+Gedurende het hele spel dient de Scoreboard-app informatie over het verloop van het spel te tonen.
+
+**Bericht cyclus**: Server -> Scoreboard-app
+``` Javascript
+GameInformation
+{
+    Type: String,
+    Game: ref Game,
+    TeamsInformation: [ref ResponseTeamGameInformation],
+    Timeleft: Number, // seconds
+}
+```
+
+### Nieuw spel openstellen 
+Een KwizMeestert moet een nieuw spel voor nieuwe aanmeldingen kunnen openstellen.
+
+**Bericht cyclus**: KwizMeestert-App -> Server -> Team-app & Scoreboard-app
+``` Javascript
+InitializeGame
+{
+    Type: String,
+    MaximumRounds: Number,
+}
+```
+
+### Aameldingen beoordelen 
+Een KwizMeestert moet de aangemelde teams kunnen goed- en afkeuren.
+
+**Bericht cyclus**: KwizMeestert-App -> Server
+``` Javascript
+RateTeamRegistration
+{   
+    Type: String,
+    Game: ref Game,
+    Team: ref Team,
+    Accepted: Boolean,
+}
+```
+
+### Spel starten 
+Een KwizMeestert moet het spel kunnen starten waardoor de aameldperiode wordt gesloten en de KwizMeestert categoriën kan kiezen.
+
+**Bericht cyclus**: KwizMeestert-App -> Server -> Team-app & Scoreboard-app
+``` Javascript
+GameStart
+{
+    Type: String,
+    Game: ref Game,
+}
+```
+
+### Spel stoppen 
+Een KwizMeestert moet het spel kunnen stoppen.
+
+**Bericht cyclus**: KwizMeestert-App -> Server -> Team-app & Scoreboard-app
+``` Javascript
+GameStop
+{
+    Type: String,
+    Game: ref Game,
+}
+```
+
+### categoriën kiezen 
+Een KwizMeestert moet na het stoppen van de aameldperiode een aantal categoriën kiezen.
+
+**Bericht cyclus**: KwizMeestert-App -> Server
+``` Javascript
+ChooseCategories
+{
+    Type: String,
+    Game: ref Game,
+    Categories: [ref Category], // length default 3
+}
+```
+
+### Vraag openstellen 
+Een KwizMeestert kan een vraag selecteren en deze openstellen aan alle deelnemende teams.
+
+**Bericht cyclus**: KwizMeestert-App -> Server -> Team-app & Scoreboard
+``` Javascript
+QuestionSelect
+{
+    Type: String,
+    Game: ref Game,
+    Round: ref Round,
+    Question: ref Question,
+}
+```
+
+### Ronde starten 
+De KwizMeestert kan een ronde starten.
+
+**Bericht cyclus**: KwizMeestert-App -> Server -> Team-app & Scoreboard-app
+``` Javascript
+RoundStart
+{
+    Type: String,
+    Game: ref Game,
+    Questions: [ref Question], // length default 12
+    MaximumThinkingTime: Number, // seconds
+}
+```
+
+### Ronde stoppen 
+Een KwizMeestert kan een ronde stoppen.
+
+**Bericht cyclus**: KwizMeestert-App -> Server -> Team-app & Scoreboard-app
+``` Javascript
+RoundStop
+{
+    Type: String,
+    Game: ref Game,
+    Round: ref Round,
+}
+```
+
+### Antwoorden beoordelen 
+Een KwizMeestert kan ingezonden antwoorden van de teams beoordelen op correctheid.
+
+**Bericht cyclus**: KwizMeester-app -> Server -> Team-app & Scoreboard-app
+``` Javascript
+RateTeamAnswer
+{
+    Type: String,
+    Game: ref Game,
+    Team: ref Team,
+    Question: ref Question,
+    Value: String,
+}
+```
+
 
 # Externe frameworks
 Hieronder staan alle bewust gebruikte bibliotheken binnen het Kwizzert systeem (Server en Client).
