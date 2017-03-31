@@ -8,6 +8,7 @@ Gemaakt door: Jeffrey Haen & Jevgeni Geurtsen.
 1. [Schermontwerpen](#schermontwerpen)
 1. [Architectuur](#architectuur)
 1. [Communicatie protocol](#communicatie-protocol)
+1. [Mappenstructuur](#mappenstructuur)
 1. [Externe frameworks](#externe-frameworks)
 1. [Code styling](#code-styling)
 
