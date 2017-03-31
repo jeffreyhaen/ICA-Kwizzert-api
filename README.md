@@ -82,7 +82,7 @@ De drie clients zijn via de volgende routings te benaderen:
 /kwizmeestert | /team | /scoreboard
 
 ## Modellen en data structuur
-Onderstaand zijn de verschillende modellen te zien die in een model validatie framework zullen worden vast gelegd. Deze data structuur wordt ook op dezelfde manier in de database opgeslagen.
+Onderstaand zijn de verschillende modellen te zien die in een model validatie framework (Mongoose) zullen worden vast gelegd. Deze data structuur wordt ook op dezelfde manier in de database opgeslagen (MongoDb).
 
 ``` Javascript
 Game
