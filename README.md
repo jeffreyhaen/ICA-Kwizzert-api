@@ -142,9 +142,9 @@ RegisterClient
 ```
 
 ### Team aanmelden 
-Een team dient zich voorafgaand het starten van het spel aan te melden met een naam.
+Een team dient zich bij de server voorafgaand het starten van het spel aan te melden met een naam. De server stuurt vervolgens deze informatie door naar de KwizMeestert.
 
-**Bericht cyclus**: Team-app -> Server
+**Bericht cyclus**: Team-app -> Server -> KwizMeestert-app
 ``` Javascript
 RegisterTeam
 {
@@ -182,9 +182,9 @@ ResponseTeamGameInformation
 ```
 
 ### Antwoord opsturen
-Een team dient een antwoord te kunnen versturen naar de server voor de huidige vraag.
+Een team dient een antwoord te kunnen versturen naar de server voor de huidige vraag. De server stuurt dit antwoord ook door naar de KwizMeestert.
 
-TaskCyle: Team-app -> Server
+**Bericht cyclus**: Team-app -> Server -> KwizMeestert-app
 ``` Javascript
 RegisterAnswer
 {
@@ -329,6 +329,52 @@ RateTeamAnswer
 }
 ```
 
+
+# Mappenstructuur
+Om een indicatie van de mappenstructuur die gebruikt wordt om het systeem te realiseren wordt hieronder een voorbeeld getoond. Het gehele systeem wordt in één repository ontwikkelt. Alle clients en de server maken gebruik van een Data Access Layer (DAL). Deze laag bevat de eerder genoemde [modellen](#modellen-en-data-structuur) en het [communicatie protocol](#communicatie-protocol). Hiermee maken we het mogelijk om één keer de modellen en het communicatie protocol te definieren.
+
+```
+server/
+    api/
+        app.js
+client/
+    team-app/
+        actions/
+        containers/
+        reducers/
+        stores/
+        theme/
+            images/
+            css/
+        index.js
+    kwizmeestert-app/
+        actions/
+        containers/
+        reducers/
+        stores/
+        theme/
+            images/
+            css/
+        index.js
+    scoreboard-app/
+        actions/
+        containers/
+        reducers/
+        stores/
+        theme/
+            images/
+            css/
+        index.js
+DAL/
+    /models
+        game.js
+        team.js
+        etc...
+    /communication-protocol
+        registerClient.js
+        registerAnswer.js
+        etc...
+```
 
 # Externe frameworks
 Hieronder staan alle bewust gebruikte bibliotheken binnen het Kwizzert systeem (Server en Client).
